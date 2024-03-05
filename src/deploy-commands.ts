@@ -1,5 +1,7 @@
+//スラッシュ コマンド定義に変更を加える必要がある場合にのみ、個別に実行する
+
 import { REST, Routes } from 'discord.js';
-import { sayhello } from './commands/index';
+import { ping } from './commands/utility/ping';
 import dotenv from 'dotenv';
 import { checkIsString } from './types/index';
 
@@ -7,22 +9,22 @@ import { checkIsString } from './types/index';
 dotenv.config();
 
 //登録コマンドを呼び出してリスト形式で登録
-const commands = [sayhello.data.toJSON()];
+const commands = [ping.data.toJSON()];
 
 const token: string = checkIsString(process.env.TOKEN);
 const applicationId: string = checkIsString(process.env.APPLICATIONID);
-const guidId: string = checkIsString(process.env.GUIDID);
+const guildId: string = checkIsString(process.env.GUILDID);
 
 const rest = new REST({ version: '10' }).setToken(token);
 
 //Discordサーヴァーにコマンドを登録
 const register = (async () => {
     try {
-        const registeredCommands = await rest.put(Routes.applicationGuildCommands(applicationId, guidId), {
+        const registeredCommands = await rest.put(Routes.applicationGuildCommands(applicationId, guildId), {
             body: commands,
         });
         console.log(registeredCommands);
     } catch (error) {
-        console.error(`コマンドの登録中にエラーが発生しました。\nエラー内容: ${error}`);
+        console.error(error);
     }
 })();

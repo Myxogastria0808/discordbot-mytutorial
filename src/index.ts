@@ -1,6 +1,6 @@
 import { GatewayIntentBits, Client, Events } from 'discord.js';
 import dotenv from 'dotenv';
-import { sayhello } from './commands/index';
+import { ping } from './commands/utility/ping';
 
 //.envファイルを読み込む
 dotenv.config();
@@ -24,19 +24,27 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand()) {
         return;
     }
-    if (interaction.commandName === sayhello.data.name) {
+    //入力されたスラッシュコマンドは、interaction.commandNameに格納される
+    //TODO: ここをいい感じにfor文で回したい
+    if (interaction.commandName === ping.data.name) {
         try {
-            await sayhello.execute(interaction);
+            await ping.execute(interaction);
         } catch (error) {
             console.error(error);
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: 'コマンド実行時にエラーになりました。', ephemeral: true });
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
             } else {
-                await interaction.reply({ content: 'コマンド実行時にエラーになりました。', ephemeral: true });
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
             }
         }
     } else {
-        console.error(`${interaction.commandName}というコマンドには対応していません。`);
+        console.error(`No command matching ${interaction.commandName} was found.`);
     }
 });
 /////////////////////////////////////////////////////////

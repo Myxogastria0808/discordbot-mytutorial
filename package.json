@@ -8,8 +8,8 @@
     "scripts": {
         "dev": "ts-node-dev --respawn ./src/index.ts",
         "start": "node dist/index.js",
-        "compile": "tsc -p .",
-        "lint": ""
+        "register": "node dist/deploy-commands.js",
+        "compile": "tsc -p ."
     },
     "devDependencies": {
         "@types/dotenv": "^8.2.0",

@@ -3,37 +3,46 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-//必要なパッケージをインポートする
 const discord_js_1 = require("discord.js");
 const dotenv_1 = __importDefault(require("dotenv"));
+const index_1 = require("./commands/index");
 //.envファイルを読み込む
 dotenv_1.default.config();
 //Botで使うGatewayIntents、partials
 const client = new discord_js_1.Client({
-    intents: [
-        discord_js_1.GatewayIntentBits.DirectMessages,
-        discord_js_1.GatewayIntentBits.Guilds,
-        discord_js_1.GatewayIntentBits.GuildMembers,
-        discord_js_1.GatewayIntentBits.GuildMessages,
-        discord_js_1.GatewayIntentBits.MessageContent,
-    ],
-    partials: [discord_js_1.Partials.Message, discord_js_1.Partials.Channel],
+    intents: [discord_js_1.GatewayIntentBits.Guilds],
 });
-//Botがきちんと起動したか確認
+//Client objectが準備できた時に一度だけ実行されます。
 client.once('ready', () => {
-    console.log('Ready!');
+    console.log('Bot starting ...');
     if (client.user) {
-        console.log(client.user.tag);
+        console.log(`Logged in as ${client.user.tag}!`);
     }
 });
-//!timeと入力すると現在時刻を返信するように
-client.on('messageCreate', async (message) => {
-    if (message.author.bot)
+////////////////////////////////////////////////////////
+//  スラッシュコマンドを使うには、interactionCreateのインベントリスナーを使う必要がある
+client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
+    if (!interaction.isChatInputCommand()) {
         return;
-    if (message.content === '!time') {
-        const date1 = new Date();
-        message.channel.send(date1.toLocaleString());
+    }
+    if (interaction.commandName === index_1.sayhello.data.name) {
+        try {
+            await index_1.sayhello.execute(interaction);
+        }
+        catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({ content: 'コマンド実行時にエラーになりました。', ephemeral: true });
+            }
+            else {
+                await interaction.reply({ content: 'コマンド実行時にエラーになりました。', ephemeral: true });
+            }
+        }
+    }
+    else {
+        console.error(`${interaction.commandName}というコマンドには対応していません。`);
     }
 });
+/////////////////////////////////////////////////////////
 //ボット作成時のトークンでDiscordと接続
 client.login(process.env.TOKEN);

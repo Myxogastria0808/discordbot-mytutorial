@@ -16,11 +16,12 @@ const applicationId = (0, index_2.checkIsString)(process.env.APPLICATIONID);
 const guidId = (0, index_2.checkIsString)(process.env.GUIDID);
 const rest = new discord_js_1.REST({ version: '10' }).setToken(token);
 //Discordサーヴァーにコマンドを登録
-(async () => {
+const register = (async () => {
     try {
-        await rest.put(discord_js_1.Routes.applicationGuildCommands(applicationId, guidId), {
+        const registeredCommands = await rest.put(discord_js_1.Routes.applicationGuildCommands(applicationId, guidId), {
             body: commands,
         });
+        console.log(registeredCommands);
     }
     catch (error) {
         console.error(`コマンドの登録中にエラーが発生しました。\nエラー内容: ${error}`);

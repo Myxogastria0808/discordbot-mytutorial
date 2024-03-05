@@ -1,6 +1,6 @@
 import { GatewayIntentBits, Client, Events } from 'discord.js';
 import dotenv from 'dotenv';
-import { sayhello } from 'commands';
+import { sayhello } from './commands/index';
 
 //.envファイルを読み込む
 dotenv.config();
@@ -25,10 +25,18 @@ client.on(Events.InteractionCreate, async (interaction) => {
         return;
     }
     if (interaction.commandName === sayhello.data.name) {
+        try {
+            await sayhello.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({ content: 'コマンド実行時にエラーになりました。', ephemeral: true });
+            } else {
+                await interaction.reply({ content: 'コマンド実行時にエラーになりました。', ephemeral: true });
+            }
+        }
     } else {
-        console.error(
-            `${interaction.commandName}というコマンドには対応していません。`
-        );
+        console.error(`${interaction.commandName}というコマンドには対応していません。`);
     }
 });
 /////////////////////////////////////////////////////////

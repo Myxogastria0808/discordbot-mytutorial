@@ -47,6 +47,126 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
             }
         }
     }
+    else if (interaction.commandName === ping_1.secretPing.data.name) {
+        try {
+            await ping_1.secretPing.execute(interaction);
+        }
+        catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+            else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    }
+    else if (interaction.commandName === ping_1.delayPing.data.name) {
+        try {
+            await ping_1.delayPing.execute(interaction);
+        }
+        catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+            else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    }
+    else if (interaction.commandName === ping_1.followUpPing.data.name) {
+        try {
+            await ping_1.followUpPing.execute(interaction);
+        }
+        catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+            else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    }
+    else if (interaction.commandName === ping_1.followUpDeferPing.data.name) {
+        try {
+            await ping_1.followUpDeferPing.execute(interaction);
+        }
+        catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+            else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    }
+    else if (interaction.commandName === ping_1.getPingMsg.data.name) {
+        try {
+            await ping_1.getPingMsg.execute(interaction);
+        }
+        catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+            else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    }
+    else if (interaction.commandName === ping_1.selectPing.data.name) {
+        try {
+            await ping_1.selectPing.execute(interaction);
+        }
+        catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+            else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    }
     else {
         console.error(`No command matching ${interaction.commandName} was found.`);
     }

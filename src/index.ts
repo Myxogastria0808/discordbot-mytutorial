@@ -1,6 +1,14 @@
 import { GatewayIntentBits, Client, Events } from 'discord.js';
 import dotenv from 'dotenv';
-import { ping } from './commands/utility/ping';
+import {
+    ping,
+    secretPing,
+    delayPing,
+    followUpPing,
+    followUpDeferPing,
+    getPingMsg,
+    selectPing,
+} from './commands/utility/ping';
 
 //.envファイルを読み込む
 dotenv.config();
@@ -29,6 +37,108 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.commandName === ping.data.name) {
         try {
             await ping.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            } else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    } else if (interaction.commandName === secretPing.data.name) {
+        try {
+            await secretPing.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            } else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    } else if (interaction.commandName === delayPing.data.name) {
+        try {
+            await delayPing.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            } else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    } else if (interaction.commandName === followUpPing.data.name) {
+        try {
+            await followUpPing.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            } else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    } else if (interaction.commandName === followUpDeferPing.data.name) {
+        try {
+            await followUpDeferPing.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            } else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    } else if (interaction.commandName === getPingMsg.data.name) {
+        try {
+            await getPingMsg.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            } else {
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true,
+                });
+            }
+        }
+    } else if (interaction.commandName === selectPing.data.name) {
+        try {
+            await selectPing.execute(interaction);
         } catch (error) {
             console.error(error);
             if (interaction.replied || interaction.deferred) {

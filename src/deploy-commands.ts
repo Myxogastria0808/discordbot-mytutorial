@@ -1,7 +1,15 @@
 //スラッシュ コマンド定義に変更を加える必要がある場合にのみ、個別に実行する
 
 import { REST, Routes } from 'discord.js';
-import { ping } from './commands/utility/ping';
+import {
+    ping,
+    secretPing,
+    delayPing,
+    followUpPing,
+    followUpDeferPing,
+    getPingMsg,
+    selectPing,
+} from './commands/utility/ping';
 import dotenv from 'dotenv';
 import { checkIsString } from './types/index';
 
@@ -9,7 +17,18 @@ import { checkIsString } from './types/index';
 dotenv.config();
 
 //登録コマンドを呼び出してリスト形式で登録
-const commands = [ping.data.toJSON()];
+const commands = [
+    ping.data.toJSON(),
+    secretPing.data.toJSON(),
+    delayPing.data.toJSON(),
+    followUpPing.data.toJSON(),
+    followUpDeferPing.data.toJSON(),
+    getPingMsg.data.toJSON(),
+    selectPing.data.toJSON(),
+];
+
+console.log(commands);
+console.log(commands.length);
 
 const token: string = checkIsString(process.env.TOKEN);
 const applicationId: string = checkIsString(process.env.APPLICATIONID);

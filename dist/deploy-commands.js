@@ -11,7 +11,17 @@ const index_1 = require("./types/index");
 //.envファイルを読み込む
 dotenv_1.default.config();
 //登録コマンドを呼び出してリスト形式で登録
-const commands = [ping_1.ping.data.toJSON()];
+const commands = [
+    ping_1.ping.data.toJSON(),
+    ping_1.secretPing.data.toJSON(),
+    ping_1.delayPing.data.toJSON(),
+    ping_1.followUpPing.data.toJSON(),
+    ping_1.followUpDeferPing.data.toJSON(),
+    ping_1.getPingMsg.data.toJSON(),
+    ping_1.selectPing.data.toJSON(),
+];
+console.log(commands);
+console.log(commands.length);
 const token = (0, index_1.checkIsString)(process.env.TOKEN);
 const applicationId = (0, index_1.checkIsString)(process.env.APPLICATIONID);
 const guildId = (0, index_1.checkIsString)(process.env.GUILDID);

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectPing = exports.getPingMsg = exports.followUpDeferPing = exports.followUpPing = exports.delayPing = exports.secretPing = exports.ping = void 0;
+exports.selectPing = exports.getPingMsg = exports.deletePing = exports.followUpDeferPing = exports.followUpPing = exports.delayPing = exports.secretPing = exports.ping = void 0;
 const discord_js_1 = require("discord.js");
 const promises_1 = require("node:timers/promises");
 const ping = {
@@ -68,6 +68,7 @@ const deletePing = {
         await interaction.deleteReply();
     },
 };
+exports.deletePing = deletePing;
 //レスポンスの Message オブジェクトの取得
 const getPingMsg = {
     data: new discord_js_1.SlashCommandBuilder().setName('get-ping-msg').setDescription('Replies with get ping msg'),
@@ -81,6 +82,7 @@ const getPingMsg = {
 };
 exports.getPingMsg = getPingMsg;
 //* サブコマンドのいろいろ
+//*適当なサンプル
 const selectPing = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('greet')

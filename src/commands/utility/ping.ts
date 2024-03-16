@@ -80,6 +80,7 @@ const getPingMsg = {
 };
 
 //* サブコマンドのいろいろ
+//*適当なサンプル
 const selectPing = {
     data: new SlashCommandBuilder()
         .setName('greet')
@@ -100,4 +101,4 @@ const selectPing = {
     },
 };
 
-export { ping, secretPing, delayPing, followUpPing, followUpDeferPing, getPingMsg, selectPing };
+export { ping, secretPing, delayPing, followUpPing, followUpDeferPing, deletePing, getPingMsg, selectPing };

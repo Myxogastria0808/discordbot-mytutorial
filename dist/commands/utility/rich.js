@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.componentInteractionAdvance = exports.componentInteractionSample = exports.MenuSample = exports.buttonSample = void 0;
+exports.ModalSample = exports.componentInteractionAdvance = exports.componentInteractionSample = exports.MenuSample = exports.buttonSample = void 0;
 const discord_js_1 = require("discord.js");
 const buttonSample = {
     data: new discord_js_1.SlashCommandBuilder().setName('button').setDescription('button sample'),
@@ -146,6 +146,7 @@ const componentInteractionSample = {
     },
 };
 exports.componentInteractionSample = componentInteractionSample;
+//*複数のインタラクションを収集する方法
 const componentInteractionAdvance = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('component-interaction-advance')
@@ -181,13 +182,27 @@ const componentInteractionAdvance = {
                 filter: collectorFilter,
                 time: 60000,
             });
-            if (confirmation.customId === 'primary') {
-                await interaction.editReply({
-                    content: 'Internal error',
-                    components: [],
-                });
-            }
-            const selectedItem = await confirmation.update({ content: 'button clicked!', components: [secondRow] });
+            if (confirmation.customId !== 'primary')
+                return;
+            const selectedItem = await confirmation.update({
+                content: 'button clicked!',
+                components: [secondRow],
+            });
+            const collector = selectedItem.createMessageComponentCollector({
+                componentType: discord_js_1.ComponentType.StringSelect,
+                time: 3600000,
+            });
+            collector.on('collect', async (i) => {
+                console.log(`client: ${i.client}`);
+                console.log(`createdAt: ${i.createdAt}`);
+                console.log(`createdTimestamp: ${i.createdTimestamp}`);
+                console.log(`locale: ${i.locale}`);
+                console.log(`member: ${i.member}`);
+                console.log(`memberPermissions: ${i.memberPermissions}`);
+                console.log(`values: ${i.values}`);
+                const selection = i.values[0];
+                await i.reply(`${i.user} has selected ${selection}!`);
+            });
         }
         catch (error) {
             await interaction.editReply({
@@ -198,3 +213,49 @@ const componentInteractionAdvance = {
     },
 };
 exports.componentInteractionAdvance = componentInteractionAdvance;
+//*モーダル
+//最大5つまで要素を持つことができる
+//*モーダルは、応答の最初でなければならない
+const ModalSample = {
+    data: new discord_js_1.SlashCommandBuilder().setName('modal').setDescription('modal sample'),
+    async execute(interaction) {
+        const modal = new discord_js_1.ModalBuilder().setCustomId('modalSample').setTitle('modal sample');
+        //modalの中身の作成
+        //*TextInputStyle.Short <- 短いテキストのインプットに使う
+        const favoriteColorInput = new discord_js_1.TextInputBuilder()
+            .setCustomId('favoriteColorInput')
+            .setLabel("What's your favorite color?")
+            .setStyle(discord_js_1.TextInputStyle.Short);
+        //*TextInput+.Paragraph <- 長めのテキストのインプットに使う
+        const hobbiesInput = new discord_js_1.TextInputBuilder()
+            .setCustomId('hobbiesInput')
+            .setLabel("What's some of your favorite hobbies?")
+            .setStyle(discord_js_1.TextInputStyle.Paragraph);
+        //*入力プロパティのいろいろ
+        const inputSample = new discord_js_1.TextInputBuilder()
+            .setCustomId('inputSample')
+            .setLabel('input sample')
+            .setStyle(discord_js_1.TextInputStyle.Paragraph)
+            .setMaxLength(1000)
+            .setMinLength(10)
+            .setPlaceholder('Enter some text!')
+            .setValue('This is a default value')
+            .setRequired(true);
+        //行のインスタンス化?
+        const firstActionRow = new discord_js_1.ActionRowBuilder().addComponents(favoriteColorInput);
+        const secondActionRow = new discord_js_1.ActionRowBuilder().addComponents(hobbiesInput);
+        const thirdActionRow = new discord_js_1.ActionRowBuilder().addComponents(inputSample);
+        //modalに追加
+        modal.addComponents(firstActionRow, secondActionRow, thirdActionRow);
+        //モーダルの表示
+        await interaction.showModal(modal);
+    },
+};
+exports.ModalSample = ModalSample;
+//*コンテキストメニュー
+//ユーザーまたはメッセージを右クリックまたはタップした際に表示されるメニュー？
+//の中の[Apps]サブメニューコマンドが作成できる
+const contextMenusSample = {
+    data: new discord_js_1.ContextMenuCommandBuilder().setName('User Information').setType(discord_js_1.ApplicationCommandType.User),
+    async execute(interaction) { },
+};

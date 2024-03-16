@@ -79,7 +79,7 @@ const getPingMsg = {
     },
 };
 
-//* サブコマンドのいろいろ
+//*少し凝ったSlashCommand
 //*適当なサンプル
 const selectPing = {
     data: new SlashCommandBuilder()

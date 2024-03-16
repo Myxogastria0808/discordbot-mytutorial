@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const dotenv_1 = __importDefault(require("dotenv"));
 const ping_1 = require("./commands/utility/ping");
-const subcommand_1 = require("./commands/utility/subcommand");
+const elaborate_1 = require("./commands/utility/elaborate");
 const rich_1 = require("./commands/utility/rich");
 //.envファイルを読み込む
 dotenv_1.default.config();
@@ -186,9 +186,9 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.stringSub.data.name) {
+        else if (interaction.commandName === elaborate_1.stringSub.data.name) {
             try {
-                await subcommand_1.stringSub.execute(interaction);
+                await elaborate_1.stringSub.execute(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -206,9 +206,9 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.stringSubRequired.data.name) {
+        else if (interaction.commandName === elaborate_1.stringSubRequired.data.name) {
             try {
-                await subcommand_1.stringSubRequired.execute(interaction);
+                await elaborate_1.stringSubRequired.execute(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -226,9 +226,9 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.variousOptionsSub.data.name) {
+        else if (interaction.commandName === elaborate_1.variousOptionsSub.data.name) {
             try {
-                await subcommand_1.variousOptionsSub.execute(interaction);
+                await elaborate_1.variousOptionsSub.execute(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -246,9 +246,9 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.choiceStringSub.data.name) {
+        else if (interaction.commandName === elaborate_1.choiceStringSub.data.name) {
             try {
-                await subcommand_1.choiceStringSub.execute(interaction);
+                await elaborate_1.choiceStringSub.execute(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -266,9 +266,9 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.choiceNumberSub.data.name) {
+        else if (interaction.commandName === elaborate_1.choiceNumberSub.data.name) {
             try {
-                await subcommand_1.choiceNumberSub.execute(interaction);
+                await elaborate_1.choiceNumberSub.execute(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -286,9 +286,9 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.choiceIntegerSub.data.name) {
+        else if (interaction.commandName === elaborate_1.choiceIntegerSub.data.name) {
             try {
-                await subcommand_1.choiceIntegerSub.execute(interaction);
+                await elaborate_1.choiceIntegerSub.execute(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -306,9 +306,9 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.subCommandSample.data.name) {
+        else if (interaction.commandName === elaborate_1.subCommandSample.data.name) {
             try {
-                await subcommand_1.subCommandSample.execute(interaction);
+                await elaborate_1.subCommandSample.execute(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -326,9 +326,9 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.selectLang.data.name) {
+        else if (interaction.commandName === elaborate_1.selectLang.data.name) {
             try {
-                await subcommand_1.selectLang.execute(interaction);
+                await elaborate_1.selectLang.execute(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -426,9 +426,9 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.autoCompleteSample.data.name) {
+        else if (interaction.commandName === elaborate_1.autoCompleteSample.data.name) {
             try {
-                await subcommand_1.autoCompleteSample.commandFunc(interaction);
+                await elaborate_1.autoCompleteSample.commandFunc(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -446,9 +446,29 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
-        else if (interaction.commandName === subcommand_1.autoCompleteSample2.data.name) {
+        else if (interaction.commandName === elaborate_1.autoCompleteSample2.data.name) {
             try {
-                await subcommand_1.autoCompleteSample2.commandFunc(interaction);
+                await elaborate_1.autoCompleteSample2.commandFunc(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.ModalSample.data.name) {
+            try {
+                await rich_1.ModalSample.execute(interaction);
             }
             catch (error) {
                 console.error(error);
@@ -471,14 +491,36 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
         }
     }
     else if (interaction.isAutocomplete()) {
-        if (interaction.commandName === subcommand_1.autoCompleteSample.data.name) {
-            await subcommand_1.autoCompleteSample.autocompleteFunc(interaction);
+        if (interaction.commandName === elaborate_1.autoCompleteSample.data.name) {
+            await elaborate_1.autoCompleteSample.autocompleteFunc(interaction);
         }
-        else if (interaction.commandName === subcommand_1.autoCompleteSample2.data.name) {
-            await subcommand_1.autoCompleteSample2.autoCompleteFunc(interaction);
+        else if (interaction.commandName === elaborate_1.autoCompleteSample2.data.name) {
+            await elaborate_1.autoCompleteSample2.autoCompleteFunc(interaction);
         }
         else {
             console.error(`No command matching ${interaction.commandName} was found.`);
+        }
+    }
+    else if (interaction.isModalSubmit()) {
+        if (interaction.customId === 'modalSample') {
+            //***モーダル送信への応答***/
+            // reply()
+            // editReply()
+            // deferReply()
+            // fetchReply()
+            // deleteReply()
+            // followUp()
+            // update()
+            // deferUpdate()
+            //が使えるはず
+            //*モーダルで送信されたデータの抽出
+            //const getInputValue = interaction.fields.getTextInputValue("custom id");
+            const favoriteColor = interaction.fields.getTextInputValue('favoriteColorInput');
+            const hobbies = interaction.fields.getTextInputValue('hobbiesInput');
+            const inputSample = interaction.fields.getTextInputValue('inputSample');
+            await interaction.reply(`favorite color: ${favoriteColor}`);
+            await interaction.followUp(`hobbies: ${hobbies}`);
+            await interaction.followUp(`inputSample: ${inputSample}`);
         }
     }
     else {

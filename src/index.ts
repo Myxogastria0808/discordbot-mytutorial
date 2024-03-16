@@ -1,4 +1,4 @@
-import { CacheType, Interaction, GatewayIntentBits, Client, Events, AutocompleteInteraction } from 'discord.js';
+import { CacheType, Interaction, GatewayIntentBits, Client, Events } from 'discord.js';
 import dotenv from 'dotenv';
 import {
     ping,
@@ -21,12 +21,13 @@ import {
     selectLang,
     autoCompleteSample,
     autoCompleteSample2,
-} from './commands/utility/subcommand';
+} from './commands/utility/elaborate';
 import {
     buttonSample,
     MenuSample,
     componentInteractionSample,
     componentInteractionAdvance,
+    ModalSample,
 } from './commands/utility/rich';
 
 //.envファイルを読み込む
@@ -424,6 +425,23 @@ client.on(Events.InteractionCreate, async (interaction: Interaction<CacheType>) 
                     });
                 }
             }
+        } else if (interaction.commandName === ModalSample.data.name) {
+            try {
+                await ModalSample.execute(interaction);
+            } catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                } else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
         } else {
             console.error(`No command matching ${interaction.commandName} was found.`);
         }
@@ -434,6 +452,27 @@ client.on(Events.InteractionCreate, async (interaction: Interaction<CacheType>) 
             await autoCompleteSample2.autoCompleteFunc(interaction);
         } else {
             console.error(`No command matching ${interaction.commandName} was found.`);
+        }
+    } else if (interaction.isModalSubmit()) {
+        if (interaction.customId === 'modalSample') {
+            //***モーダル送信への応答***/
+            // reply()
+            // editReply()
+            // deferReply()
+            // fetchReply()
+            // deleteReply()
+            // followUp()
+            // update()
+            // deferUpdate()
+            //が使えるはず
+            //*モーダルで送信されたデータの抽出
+            //const getInputValue = interaction.fields.getTextInputValue("custom id");
+            const favoriteColor = interaction.fields.getTextInputValue('favoriteColorInput');
+            const hobbies = interaction.fields.getTextInputValue('hobbiesInput');
+            const inputSample = interaction.fields.getTextInputValue('inputSample');
+            await interaction.reply(`favorite color: ${favoriteColor}`);
+            await interaction.followUp(`hobbies: ${hobbies}`);
+            await interaction.followUp(`inputSample: ${inputSample}`);
         }
     } else {
         return;

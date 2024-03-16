@@ -7,7 +7,7 @@ const discord_js_1 = require("discord.js");
 const ping_1 = require("./commands/utility/ping");
 const dotenv_1 = __importDefault(require("dotenv"));
 const index_1 = require("./types/index");
-const subcommand_1 = require("./commands/utility/subcommand");
+const elaborate_1 = require("./commands/utility/elaborate");
 const rich_1 = require("./commands/utility/rich");
 //.envファイルを読み込む
 dotenv_1.default.config();
@@ -21,20 +21,21 @@ const commands = [
     ping_1.deletePing.data.toJSON(),
     ping_1.getPingMsg.data.toJSON(),
     ping_1.selectPing.data.toJSON(),
-    subcommand_1.stringSub.data.toJSON(),
-    subcommand_1.stringSubRequired.data.toJSON(),
-    subcommand_1.variousOptionsSub.data.toJSON(),
-    subcommand_1.choiceStringSub.data.toJSON(),
-    subcommand_1.choiceNumberSub.data.toJSON(),
-    subcommand_1.choiceIntegerSub.data.toJSON(),
-    subcommand_1.subCommandSample.data.toJSON(),
-    subcommand_1.selectLang.data.toJSON(),
-    subcommand_1.autoCompleteSample.data.toJSON(),
-    subcommand_1.autoCompleteSample2.data.toJSON(),
+    elaborate_1.stringSub.data.toJSON(),
+    elaborate_1.stringSubRequired.data.toJSON(),
+    elaborate_1.variousOptionsSub.data.toJSON(),
+    elaborate_1.choiceStringSub.data.toJSON(),
+    elaborate_1.choiceNumberSub.data.toJSON(),
+    elaborate_1.choiceIntegerSub.data.toJSON(),
+    elaborate_1.subCommandSample.data.toJSON(),
+    elaborate_1.selectLang.data.toJSON(),
+    elaborate_1.autoCompleteSample.data.toJSON(),
+    elaborate_1.autoCompleteSample2.data.toJSON(),
     rich_1.buttonSample.data.toJSON(),
     rich_1.MenuSample.data.toJSON(),
     rich_1.componentInteractionSample.data.toJSON(),
     rich_1.componentInteractionAdvance.data.toJSON(),
+    rich_1.ModalSample.data.toJSON(),
 ];
 console.log(commands);
 console.log(commands.length);

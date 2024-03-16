@@ -22,12 +22,13 @@ import {
     selectLang,
     autoCompleteSample,
     autoCompleteSample2,
-} from './commands/utility/subcommand';
+} from './commands/utility/elaborate';
 import {
     buttonSample,
     MenuSample,
     componentInteractionSample,
     componentInteractionAdvance,
+    ModalSample,
 } from './commands/utility/rich';
 
 //.envファイルを読み込む
@@ -57,6 +58,7 @@ const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [
     MenuSample.data.toJSON(),
     componentInteractionSample.data.toJSON(),
     componentInteractionAdvance.data.toJSON(),
+    ModalSample.data.toJSON(),
 ];
 
 console.log(commands);

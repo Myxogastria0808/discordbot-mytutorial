@@ -10,6 +10,19 @@ import {
     RoleSelectMenuBuilder,
     MentionableSelectMenuBuilder,
     ChannelSelectMenuBuilder,
+    InteractionResponse,
+    ComponentType,
+    StringSelectMenuInteraction,
+    CacheType,
+    ModalBuilder,
+    TextInputAssertions,
+    TextInputBuilder,
+    TextInputStyle,
+    ModalActionRowComponent,
+    ModalActionRowComponentBuilder,
+    ContextMenuCommandBuilder,
+    ApplicationCommandType,
+    ContextMenuCommandInteraction,
 } from 'discord.js';
 
 const buttonSample = {
@@ -171,6 +184,7 @@ const componentInteractionSample = {
     },
 };
 
+//*複数のインタラクションを収集する方法
 const componentInteractionAdvance = {
     data: new SlashCommandBuilder()
         .setName('component-interaction-advance')
@@ -212,13 +226,26 @@ const componentInteractionAdvance = {
                 filter: collectorFilter,
                 time: 60_000,
             });
-            if (confirmation.customId === 'primary') {
-                await interaction.editReply({
-                    content: 'Internal error',
-                    components: [],
-                });
-            }
-            const selectedItem = await confirmation.update({ content: 'button clicked!', components: [secondRow] });
+            if (confirmation.customId !== 'primary') return;
+            const selectedItem: InteractionResponse<boolean> = await confirmation.update({
+                content: 'button clicked!',
+                components: [secondRow],
+            });
+            const collector = selectedItem.createMessageComponentCollector({
+                componentType: ComponentType.StringSelect,
+                time: 3_600_000,
+            });
+            collector.on('collect', async (i: StringSelectMenuInteraction<CacheType>) => {
+                console.log(`client: ${i.client}`);
+                console.log(`createdAt: ${i.createdAt}`);
+                console.log(`createdTimestamp: ${i.createdTimestamp}`);
+                console.log(`locale: ${i.locale}`);
+                console.log(`member: ${i.member}`);
+                console.log(`memberPermissions: ${i.memberPermissions}`);
+                console.log(`values: ${i.values}`);
+                const selection = i.values[0];
+                await i.reply(`${i.user} has selected ${selection}!`);
+            });
         } catch (error) {
             await interaction.editReply({
                 content: 'Confirmation not received within 1 minute, cancelling',
@@ -228,4 +255,57 @@ const componentInteractionAdvance = {
     },
 };
 
-export { buttonSample, MenuSample, componentInteractionSample, componentInteractionAdvance };
+//*モーダル
+//最大5つまで要素を持つことができる
+//*モーダルは、応答の最初でなければならない
+const ModalSample = {
+    data: new SlashCommandBuilder().setName('modal').setDescription('modal sample'),
+    async execute(interaction: CommandInteraction) {
+        const modal = new ModalBuilder().setCustomId('modalSample').setTitle('modal sample');
+
+        //modalの中身の作成
+        //*TextInputStyle.Short <- 短いテキストのインプットに使う
+        const favoriteColorInput = new TextInputBuilder()
+            .setCustomId('favoriteColorInput')
+            .setLabel("What's your favorite color?")
+            .setStyle(TextInputStyle.Short);
+
+        //*TextInput+.Paragraph <- 長めのテキストのインプットに使う
+        const hobbiesInput = new TextInputBuilder()
+            .setCustomId('hobbiesInput')
+            .setLabel("What's some of your favorite hobbies?")
+            .setStyle(TextInputStyle.Paragraph);
+
+        //*入力プロパティのいろいろ
+        const inputSample = new TextInputBuilder()
+            .setCustomId('inputSample')
+            .setLabel('input sample')
+            .setStyle(TextInputStyle.Paragraph)
+            .setMaxLength(1_000)
+            .setMinLength(10)
+            .setPlaceholder('Enter some text!')
+            .setValue('This is a default value')
+            .setRequired(true);
+
+        //行のインスタンス化?
+        const firstActionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(favoriteColorInput);
+        const secondActionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(hobbiesInput);
+        const thirdActionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(inputSample);
+
+        //modalに追加
+        modal.addComponents(firstActionRow, secondActionRow, thirdActionRow);
+
+        //モーダルの表示
+        await interaction.showModal(modal);
+    },
+};
+
+//*コンテキストメニュー
+//ユーザーまたはメッセージを右クリックまたはタップした際に表示されるメニュー？
+//の中の[Apps]サブメニューコマンドが作成できる
+const contextMenusSample = {
+    data: new ContextMenuCommandBuilder().setName('User Information').setType(ApplicationCommandType.User),
+    async execute(interaction: ContextMenuCommandInteraction) {},
+};
+
+export { buttonSample, MenuSample, componentInteractionSample, componentInteractionAdvance, ModalSample };

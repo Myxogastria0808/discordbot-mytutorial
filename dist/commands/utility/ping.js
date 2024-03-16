@@ -81,7 +81,7 @@ const getPingMsg = {
     },
 };
 exports.getPingMsg = getPingMsg;
-//* サブコマンドのいろいろ
+//*少し凝ったSlashCommand
 //*適当なサンプル
 const selectPing = {
     data: new discord_js_1.SlashCommandBuilder()

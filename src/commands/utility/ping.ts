@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { CommandInteraction, Message, SlashCommandBuilder } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
 
 const ping = {
@@ -73,7 +73,7 @@ const getPingMsg = {
     async execute(interaction: CommandInteraction) {
         await interaction.reply('Pong!');
         //返信の取得
-        const message = await interaction.fetchReply();
+        const message: Message<boolean> = await interaction.fetchReply();
         await interaction.followUp(`Get reply message: ${message}`);
         console.log(message);
     },

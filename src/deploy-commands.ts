@@ -1,4 +1,9 @@
-import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
+import {
+    REST,
+    RESTPostAPIChatInputApplicationCommandsJSONBody,
+    RESTPostAPIContextMenuApplicationCommandsJSONBody,
+    Routes,
+} from 'discord.js';
 import {
     ping,
     secretPing,
@@ -29,13 +34,28 @@ import {
     componentInteractionSample,
     componentInteractionAdvance,
     ModalSample,
+    contextMenusUser,
+    contentMenusMessage,
+    MarkDownMassage,
+    EmbedSample,
+    embedLocalImgSample,
+    embedReplyAndEdit,
+    reactionExample,
+    reactNonOrderSample,
+    reactAllDelete,
+    reactSpecificDelete,
+    reactSpecificGet,
 } from './commands/utility/rich';
 
 //.envファイルを読み込む
 dotenv.config();
 
-//登録コマンドを呼び出してリスト形式で登録
-const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [
+//登録コマンドを呼び出してリスト形式で登録 (SlashCommandのやつ | ContextCommandのやつ)
+type RESTPostAPIApplicationCommandsJSONBody =
+    | RESTPostAPIChatInputApplicationCommandsJSONBody
+    | RESTPostAPIContextMenuApplicationCommandsJSONBody;
+
+const commands: RESTPostAPIApplicationCommandsJSONBody[] = [
     ping.data.toJSON(),
     secretPing.data.toJSON(),
     delayPing.data.toJSON(),
@@ -59,6 +79,17 @@ const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [
     componentInteractionSample.data.toJSON(),
     componentInteractionAdvance.data.toJSON(),
     ModalSample.data.toJSON(),
+    contextMenusUser.data.toJSON(),
+    contentMenusMessage.data.toJSON(),
+    MarkDownMassage.data.toJSON(),
+    EmbedSample.data.toJSON(),
+    embedLocalImgSample.data.toJSON(),
+    embedReplyAndEdit.data.toJSON(),
+    reactionExample.data.toJSON(),
+    reactNonOrderSample.data.toJSON(),
+    reactAllDelete.data.toJSON(),
+    reactSpecificDelete.data.toJSON(),
+    reactSpecificGet.data.toJSON(),
 ];
 
 console.log(commands);

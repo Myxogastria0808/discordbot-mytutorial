@@ -11,7 +11,6 @@ const elaborate_1 = require("./commands/utility/elaborate");
 const rich_1 = require("./commands/utility/rich");
 //.envファイルを読み込む
 dotenv_1.default.config();
-//登録コマンドを呼び出してリスト形式で登録
 const commands = [
     ping_1.ping.data.toJSON(),
     ping_1.secretPing.data.toJSON(),
@@ -36,6 +35,17 @@ const commands = [
     rich_1.componentInteractionSample.data.toJSON(),
     rich_1.componentInteractionAdvance.data.toJSON(),
     rich_1.ModalSample.data.toJSON(),
+    rich_1.contextMenusUser.data.toJSON(),
+    rich_1.contentMenusMessage.data.toJSON(),
+    rich_1.MarkDownMassage.data.toJSON(),
+    rich_1.EmbedSample.data.toJSON(),
+    rich_1.embedLocalImgSample.data.toJSON(),
+    rich_1.embedReplyAndEdit.data.toJSON(),
+    rich_1.reactionExample.data.toJSON(),
+    rich_1.reactNonOrderSample.data.toJSON(),
+    rich_1.reactAllDelete.data.toJSON(),
+    rich_1.reactSpecificDelete.data.toJSON(),
+    rich_1.reactSpecificGet.data.toJSON(),
 ];
 console.log(commands);
 console.log(commands.length);

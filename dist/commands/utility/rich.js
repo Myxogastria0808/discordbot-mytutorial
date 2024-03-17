@@ -1,7 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ModalSample = exports.componentInteractionAdvance = exports.componentInteractionSample = exports.MenuSample = exports.buttonSample = void 0;
+exports.reactSpecificGet = exports.reactSpecificDelete = exports.reactAllDelete = exports.reactNonOrderSample = exports.reactionExample = exports.embedReplyAndEdit = exports.embedLocalImgSample = exports.EmbedSample = exports.MarkDownMassage = exports.contentMenusMessage = exports.contextMenusUser = exports.ModalSample = exports.componentInteractionAdvance = exports.componentInteractionSample = exports.MenuSample = exports.buttonSample = void 0;
 const discord_js_1 = require("discord.js");
+const dotenv_1 = __importDefault(require("dotenv"));
+const index_1 = require("../../types/index");
+const promises_1 = require("node:timers/promises");
 const buttonSample = {
     data: new discord_js_1.SlashCommandBuilder().setName('button').setDescription('button sample'),
     async execute(interaction) {
@@ -255,7 +261,331 @@ exports.ModalSample = ModalSample;
 //*コンテキストメニュー
 //ユーザーまたはメッセージを右クリックまたはタップした際に表示されるメニュー？
 //の中の[Apps]サブメニューコマンドが作成できる
-const contextMenusSample = {
+//参考にした動画: https://www.youtube.com/watch?v=U4uRGMXf_kY
+const contextMenusUser = {
+    //ApplicationCommandType <-トリガーとなる対象を選ぶことができる
     data: new discord_js_1.ContextMenuCommandBuilder().setName('User Information').setType(discord_js_1.ApplicationCommandType.User),
-    async execute(interaction) { },
+    async execute(interaction) {
+        //対象のメッセージを取得する
+        const targetUser = interaction.targetUser;
+        interaction.reply(`
+            Username: ${targetUser.username}
+            ID: ${targetUser.id}
+            User tag: ${targetUser.tag}
+            Avatar: ${targetUser.avatar}
+            Global Name: ${targetUser.globalName}
+            Created At: ${targetUser.createdAt}
+            Created Timestamp: ${targetUser.createdTimestamp}
+        `);
+    },
 };
+exports.contextMenusUser = contextMenusUser;
+//.envファイルを読み込む
+dotenv_1.default.config();
+const contentMenusMessage = {
+    data: new discord_js_1.ContextMenuCommandBuilder().setName('Translate message').setType(discord_js_1.ApplicationCommandType.Message),
+    async execute(interaction) {
+        //対象のメッセージを取得する
+        const targetMessage = interaction.targetMessage;
+        interaction.reply(`
+            Original message: ${targetMessage}
+            Translate message: ....
+        `);
+    },
+};
+exports.contentMenusMessage = contentMenusMessage;
+const MarkDownMassage = {
+    data: new discord_js_1.SlashCommandBuilder().setName('markdown').setDescription('This is a markdown sample'),
+    async execute(interaction) {
+        const boldString = (0, discord_js_1.bold)('bold');
+        const italicString = (0, discord_js_1.italic)('italic');
+        const strikethroughString = (0, discord_js_1.strikethrough)('strikethrough');
+        const underscoreString = (0, discord_js_1.underscore)('underscore');
+        const spoilerString = (0, discord_js_1.spoiler)('spoiler');
+        const quoteString = (0, discord_js_1.quote)('quote');
+        const blockquoteString = (0, discord_js_1.blockQuote)('blockquote');
+        //リンクのマスク
+        const url = 'https://yukiosada.work';
+        const link = (0, discord_js_1.hyperlink)('My website!', url);
+        //hideLinkEmbed で <> の埋め込みを防ぐ
+        const hiddenEmbed = (0, discord_js_1.hideLinkEmbed)(url);
+        //タイムスタンプ
+        const date = new Date();
+        const timeString = (0, discord_js_1.time)(date);
+        const timeD = (0, discord_js_1.time)(date, 'D');
+        const timeF = (0, discord_js_1.time)(date, 'F');
+        const timeR = (0, discord_js_1.time)(date, 'R');
+        const timeT = (0, discord_js_1.time)(date, 'T');
+        const timed = (0, discord_js_1.time)(date, 'd');
+        const timef = (0, discord_js_1.time)(date, 'f');
+        const timet = (0, discord_js_1.time)(date, 't');
+        //メンション
+        const channelId = (0, index_1.checkIsString)(process.env.EXAMPLECHANNEL);
+        const roleId = (0, index_1.checkIsString)(process.env.EXAMPLEROLE);
+        const userId = (0, index_1.checkIsString)(process.env.EXAMPLEUSER);
+        const channel = (0, discord_js_1.channelMention)(channelId);
+        const role = (0, discord_js_1.roleMention)(roleId);
+        const user = (0, discord_js_1.userMention)(userId);
+        await interaction.reply(`
+${boldString}
+
+${italicString}
+
+${strikethroughString}
+
+${underscoreString}
+
+${spoilerString}
+
+${quoteString}
+
+${blockquoteString}
+        `);
+        await interaction.followUp(`
+normal
+${url}
+        `);
+        await interaction.followUp(`
+hyperlink()
+${link}
+        `);
+        await interaction.followUp(`
+hideLinkEmbed
+${hiddenEmbed}
+        `);
+        await interaction.followUp(`
+normal
+${date}
+
+time()
+${timeString}
+
+time( , 'D')
+${timeD}
+
+time( , 'F')
+${timeF}
+
+time( , 'R')
+${timeR}
+
+time( , 'T')
+${timeT}
+
+time( , 'd')
+${timed}
+
+time( , 'f')
+${timef}
+
+time( , 't')
+${timet}
+        `);
+        await interaction.followUp(`
+channel mention
+${channel}
+
+role mention
+${role}
+
+user mention
+${user}
+        `);
+    },
+};
+exports.MarkDownMassage = MarkDownMassage;
+const EmbedSample = {
+    data: new discord_js_1.SlashCommandBuilder().setName('embed').setDescription('embed sample'),
+    async execute(interaction) {
+        //*基本のパターン
+        //全体の文字数は、6000文字以内
+        const exampleEmbed = new discord_js_1.EmbedBuilder()
+            //側面の色を決めることができる
+            //整数、16進数のカラー文字列、RGB値の配列、特定のカラー文字列で設定可能らしい
+            .setColor(0x0099ff)
+            //256文字以内
+            .setTitle('Embed Title')
+            .setURL('https://yukiosada.work/')
+            //setAuthorのnameは、256文字以内
+            .setAuthor({
+            name: 'Yuki Osada',
+            iconURL: 'https://cdn.discordapp.com/attachments/831456338513100810/1042555381815181392/sdfgf.png?ex=660492dc&is=65f21ddc&hm=faf68c3d1e898bb89abb6231c286a8143d8dad742a43d33ec2baa5982f4fdeda&',
+            url: 'https://yukiosada.work/',
+        })
+            //4096文字以内
+            .setDescription('Embed description')
+            .setThumbnail('https://cdn.discordapp.com/attachments/831456338513100810/1042555381815181392/sdfgf.png?ex=660492dc&is=65f21ddc&hm=faf68c3d1e898bb89abb6231c286a8143d8dad742a43d33ec2baa5982f4fdeda&')
+            //フィールドの数は、25個以内
+            //nameは、256文字以内
+            //valueは、1024文字以内
+            .addFields({ name: 'Regular field title', value: 'Some field value', inline: false }, 
+        //以下のように書くと、空のフィールドを作れる
+        { name: '\u200B', value: '\u200B', inline: false }, 
+        //inline：trueにすると、{name: "", value: ""} ごとに改行されない
+        { name: 'Inline: true', value: 'sample text', inline: true }, { name: 'Inline: true', value: 'sample text', inline: true }, { name: 'Inline: true', value: 'sample text', inline: true }, 
+        //inline: falseにすると、文字は折り返されない
+        { name: 'Inline: false', value: 'sample text', inline: false }, { name: 'Inline: false', value: 'sample text', inline: false }, { name: 'Inline: false', value: 'sample text', inline: false })
+            .addFields({ name: 'additional Inline field title', value: 'sample text', inline: false }, 
+        //valueは、1文字以上必要
+        { name: 'The least value pattern', value: 'あ', inline: false }, 
+        //URLのマスクができる
+        { name: 'The least value pattern', value: '[My Website!](https://yukiosada.work/)', inline: false })
+            //画像を埋め込める
+            //URLじゃないとだめらしい
+            .setImage('https://cdn.discordapp.com/attachments/831456338513100810/1042555381815181392/sdfgf.png?ex=660492dc&is=65f21ddc&hm=faf68c3d1e898bb89abb6231c286a8143d8dad742a43d33ec2baa5982f4fdeda&')
+            //タイムスタンプも設置できる
+            .setTimestamp()
+            //setFooterのtextは、2024文字以内
+            .setFooter({
+            text: 'Embed footer text',
+            iconURL: 'https://cdn.discordapp.com/attachments/831456338513100810/1042555381815181392/sdfgf.png?ex=660492dc&is=65f21ddc&hm=faf68c3d1e898bb89abb6231c286a8143d8dad742a43d33ec2baa5982f4fdeda&',
+        });
+        interaction.reply({ embeds: [exampleEmbed] });
+    },
+};
+exports.EmbedSample = EmbedSample;
+const embedLocalImgSample = {
+    data: new discord_js_1.SlashCommandBuilder().setName('embed-local-img').setDescription('Embed local image'),
+    async execute(interaction) {
+        //*ローカルの画像を表示する方法
+        //*プロジェクト直下のパスからの絶対パス？でパスを設定する
+        const img = new discord_js_1.AttachmentBuilder('./src/commands/utility/sample.jpg');
+        const localImgEmbed = new discord_js_1.EmbedBuilder()
+            .setTitle('Local image embed title')
+            .setImage('attachment://sample.jpg');
+        interaction.reply({ embeds: [localImgEmbed], files: [img] });
+    },
+};
+exports.embedLocalImgSample = embedLocalImgSample;
+//*再送信と編集
+//参照: https://discordjs.guide/popular-topics/embeds.html#using-the-embed-constructor
+//※edit()は、よくわからない
+const embedReplyAndEdit = {
+    data: new discord_js_1.SlashCommandBuilder().setName('embed-reply-and-edit').setDescription('replya and edit embed'),
+    async execute(interaction) {
+        const originEmbed = new discord_js_1.EmbedBuilder().setTitle('Origin Title');
+        await interaction.reply({ embeds: [originEmbed] });
+        const message = await interaction.fetchReply();
+        const receivedEmbed = message.embeds[0];
+        const replyEmbed = discord_js_1.EmbedBuilder.from(receivedEmbed)
+            .setTitle('New Title')
+            .setDescription('new description');
+        await interaction.followUp({ embeds: [replyEmbed] });
+    },
+};
+exports.embedReplyAndEdit = embedReplyAndEdit;
+//*リアクションの追加 (順番通り)
+//参照: https://discordjs.guide/popular-topics/reactions.html
+const reactionExample = {
+    data: new discord_js_1.SlashCommandBuilder().setName('reaction').setDescription('reaction sample'),
+    async execute(interaction) {
+        await interaction.reply('Reaction in order :smile:');
+        const message = await interaction.fetchReply();
+        //*** reactionの追加 ***//
+        try {
+            //* Unicoe絵文字
+            //awaitをつけることで必ず以下の順番で表示される
+            await message.react('😄');
+            await message.react('👷');
+            //* カスタム絵文字
+            //await message.react('123456789012345678');
+            //以下の形式でも表示可能らしい
+            // message.react('<:blobreach:123456789012345678>');
+            // message.react('blobreach:123456789012345678');
+            // message.react('<a:blobreach:123456789012345678>');
+            // message.react('a:blobreach:123456789012345678');
+        }
+        catch (error) {
+            console.error('One of the emojis failed to react:', error);
+        }
+    },
+};
+exports.reactionExample = reactionExample;
+//*リアクションの追加 (順番不明)
+const reactNonOrderSample = {
+    data: new discord_js_1.SlashCommandBuilder().setName('reaction-non-order').setDescription('reaction non order sample'),
+    async execute(interaction) {
+        //順番が重要でなければ以下のような書き方もできる
+        await interaction.reply('It reacts regardless of the order :smile:');
+        const message = await interaction.fetchReply();
+        //*** reactionの追加 ***//
+        Promise.all([message.react('1⃣'), message.react('2⃣'), message.react('3⃣')]).catch((error) => console.error('One of the emojis failed to react:', error));
+    },
+};
+exports.reactNonOrderSample = reactNonOrderSample;
+//*リアクションの全削除
+const reactAllDelete = {
+    data: new discord_js_1.SlashCommandBuilder().setName('reaction-all-delete').setDescription('reaction all delete sample'),
+    async execute(interaction) {
+        await interaction.reply('Reaction remove after 5 sec.');
+        const message = await interaction.fetchReply();
+        try {
+            //reactionの追加
+            await message.react('😄');
+            await message.react('👷');
+            await message.react('🐡');
+            await message.react('🐚');
+        }
+        catch (error) {
+            console.error('One of the emojis failed to react:', error);
+        }
+        //5秒待機
+        await (0, promises_1.setTimeout)(5000);
+        //*** reactionの削除 ***//
+        //reactionの全削除
+        await message.reactions.removeAll().catch((error) => console.error('Failed to clear reactions:', error));
+    },
+};
+exports.reactAllDelete = reactAllDelete;
+//*特定のリアクションの削除
+const reactSpecificDelete = {
+    data: new discord_js_1.SlashCommandBuilder().setName('reaction-specific-delete').setDescription('reaction all delete sample'),
+    async execute(interaction) {
+        await interaction.reply('Reaction remove after 5 sec.');
+        const message = await interaction.fetchReply();
+        try {
+            //reactionの追加
+            await message.react('🐡');
+            await message.react('🐚');
+            await message.react('🍏');
+            await message.react('🐠');
+        }
+        catch (error) {
+            console.error('One of the emojis failed to react:', error);
+        }
+        //5秒待機
+        await (0, promises_1.setTimeout)(5000);
+        //*** reactionの削除 ***//
+        //特定のreactionの削除
+        //*get()を使った場合
+        await message.reactions.cache
+            .get('🐡')
+            ?.remove()
+            .catch((error) => console.error('Failed to remove reactions:', error));
+        await message.reactions.cache
+            .get('🐚')
+            ?.remove()
+            .catch((error) => console.error('Failed to remove reactions:', error));
+    },
+};
+exports.reactSpecificDelete = reactSpecificDelete;
+//*特定のリアクションの取得
+const reactSpecificGet = {
+    data: new discord_js_1.SlashCommandBuilder().setName('reaction-specific-get').setDescription('reaction all delete sample'),
+    async execute(interaction) {
+        const message = await interaction.reply({ content: 'Emoji Reaction!', fetchReply: true });
+        //*** reactionの取得 ***//
+        //*find()を使った場合
+        //始めに見つかった絵文字のみ取得する
+        const findEmoji = message.guild?.emojis.cache.find((emoji) => emoji.name === '🚙');
+        if (typeof findEmoji === 'undefined')
+            return;
+        await message.react(findEmoji);
+        //*get()を使った場合
+        const getEmoji = message.client.emojis.cache.get('⛰');
+        if (typeof getEmoji === 'undefined')
+            return;
+        await message.react(getEmoji);
+    },
+};
+exports.reactSpecificGet = reactSpecificGet;

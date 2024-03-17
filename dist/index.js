@@ -12,8 +12,19 @@ const rich_1 = require("./commands/utility/rich");
 dotenv_1.default.config();
 //Botで使うGatewayIntents、partials
 const client = new discord_js_1.Client({
-    intents: [discord_js_1.GatewayIntentBits.Guilds],
+    //以下は、ボットがリアクションをする際に必要？
+    //GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions
+    intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.GuildMessageReactions],
 });
+//謎
+// //ボットのユーザー名の設定
+// client.user?.setUsername('Nyoki');
+// //アバター設定
+// client.user?.setAvatar('./avator/pexels-asad-photo-maldives-457881.jpg');
+// //プレイステータスの設定
+// client.user?.setActivity('nyoki nyoki nyoki');
+// //ボットの状態
+// client.user?.setStatus('online');
 //Client objectが準備できた時に一度だけ実行されます。
 client.once('ready', () => {
     console.log('Bot starting ...');
@@ -486,6 +497,186 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
+        else if (interaction.commandName === rich_1.MarkDownMassage.data.name) {
+            try {
+                await rich_1.MarkDownMassage.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.EmbedSample.data.name) {
+            try {
+                await rich_1.EmbedSample.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.embedLocalImgSample.data.name) {
+            try {
+                await rich_1.embedLocalImgSample.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.embedReplyAndEdit.data.name) {
+            try {
+                await rich_1.embedReplyAndEdit.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.reactionExample.data.name) {
+            try {
+                await rich_1.reactionExample.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.reactNonOrderSample.data.name) {
+            try {
+                await rich_1.reactNonOrderSample.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.reactAllDelete.data.name) {
+            try {
+                await rich_1.reactAllDelete.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.reactSpecificDelete.data.name) {
+            try {
+                await rich_1.reactSpecificDelete.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.reactSpecificGet.data.name) {
+            try {
+                await rich_1.reactSpecificGet.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
         else {
             console.error(`No command matching ${interaction.commandName} was found.`);
         }
@@ -521,6 +712,16 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
             await interaction.reply(`favorite color: ${favoriteColor}`);
             await interaction.followUp(`hobbies: ${hobbies}`);
             await interaction.followUp(`inputSample: ${inputSample}`);
+        }
+    }
+    else if (interaction.isMessageContextMenuCommand()) {
+        if (interaction.commandName === 'Translate message') {
+            await rich_1.contentMenusMessage.execute(interaction);
+        }
+    }
+    else if (interaction.isUserContextMenuCommand()) {
+        if (interaction.commandName === 'User Information') {
+            await rich_1.contextMenusUser.execute(interaction);
         }
     }
     else {

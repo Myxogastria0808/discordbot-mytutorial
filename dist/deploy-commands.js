@@ -46,6 +46,8 @@ const commands = [
     rich_1.reactAllDelete.data.toJSON(),
     rich_1.reactSpecificDelete.data.toJSON(),
     rich_1.reactSpecificGet.data.toJSON(),
+    rich_1.reactCollectorSample.data.toJSON(),
+    rich_1.reactCollectorAwaitReactionSample.data.toJSON(),
 ];
 console.log(commands);
 console.log(commands.length);

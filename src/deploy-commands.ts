@@ -45,6 +45,8 @@ import {
     reactAllDelete,
     reactSpecificDelete,
     reactSpecificGet,
+    reactCollectorSample,
+    reactCollectorAwaitReactionSample,
 } from './commands/utility/rich';
 
 //.envファイルを読み込む
@@ -90,6 +92,8 @@ const commands: RESTPostAPIApplicationCommandsJSONBody[] = [
     reactAllDelete.data.toJSON(),
     reactSpecificDelete.data.toJSON(),
     reactSpecificGet.data.toJSON(),
+    reactCollectorSample.data.toJSON(),
+    reactCollectorAwaitReactionSample.data.toJSON(),
 ];
 
 console.log(commands);

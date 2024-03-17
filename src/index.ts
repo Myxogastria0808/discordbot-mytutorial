@@ -39,6 +39,8 @@ import {
     reactAllDelete,
     reactSpecificDelete,
     reactSpecificGet,
+    reactCollectorSample,
+    reactCollectorAwaitReactionSample,
 } from './commands/utility/rich';
 
 //.envファイルを読み込む
@@ -73,6 +75,7 @@ client.once('ready', () => {
 //  スラッシュコマンドを使うには、interactionCreateのインベントリスナーを使う必要がある
 client.on(Events.InteractionCreate, async (interaction: Interaction<CacheType>) => {
     if (interaction.isChatInputCommand()) {
+        //*ChatInputCommand
         //入力されたスラッシュコマンドは、interaction.commandNameに格納される
         if (interaction.commandName === ping.data.name) {
             try {
@@ -618,10 +621,45 @@ client.on(Events.InteractionCreate, async (interaction: Interaction<CacheType>) 
                     });
                 }
             }
+        } else if (interaction.commandName === reactCollectorSample.data.name) {
+            try {
+                await reactCollectorSample.execute(interaction);
+            } catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                } else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        } else if (interaction.commandName === reactCollectorAwaitReactionSample.data.name) {
+            try {
+                await reactCollectorAwaitReactionSample.execute(interaction);
+            } catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                } else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
         } else {
             console.error(`No command matching ${interaction.commandName} was found.`);
         }
     } else if (interaction.isAutocomplete()) {
+        //*Autocomplete
         if (interaction.commandName === autoCompleteSample.data.name) {
             await autoCompleteSample.autocompleteFunc(interaction);
         } else if (interaction.commandName === autoCompleteSample2.data.name) {
@@ -629,31 +667,13 @@ client.on(Events.InteractionCreate, async (interaction: Interaction<CacheType>) 
         } else {
             console.error(`No command matching ${interaction.commandName} was found.`);
         }
-    } else if (interaction.isModalSubmit()) {
-        if (interaction.customId === 'modalSample') {
-            //***モーダル送信への応答***/
-            // reply()
-            // editReply()
-            // deferReply()
-            // fetchReply()
-            // deleteReply()
-            // followUp()
-            // update()
-            // deferUpdate()
-            //が使えるはず
-            //*モーダルで送信されたデータの抽出
-            const favoriteColor: string = interaction.fields.getTextInputValue('favoriteColorInput');
-            const hobbies: string = interaction.fields.getTextInputValue('hobbiesInput');
-            const inputSample: string = interaction.fields.getTextInputValue('inputSample');
-            await interaction.reply(`favorite color: ${favoriteColor}`);
-            await interaction.followUp(`hobbies: ${hobbies}`);
-            await interaction.followUp(`inputSample: ${inputSample}`);
-        }
     } else if (interaction.isMessageContextMenuCommand()) {
+        //*MessageContextMenuCommand
         if (interaction.commandName === 'Translate message') {
             await contentMenusMessage.execute(interaction);
         }
     } else if (interaction.isUserContextMenuCommand()) {
+        //*UserContextMenuCommand
         if (interaction.commandName === 'User Information') {
             await contextMenusUser.execute(interaction);
         }

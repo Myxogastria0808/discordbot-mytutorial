@@ -42,6 +42,14 @@ import {
     AttachmentBuilder,
     Embed,
     GuildEmoji,
+    Collection,
+    ModalSubmitInteraction,
+    ButtonInteraction,
+    UserSelectMenuInteraction,
+    RoleSelectMenuInteraction,
+    ChannelSelectMenuInteraction,
+    MentionableSelectMenuInteraction,
+    MessageReaction,
 } from 'discord.js';
 import dotenv from 'dotenv';
 import { checkIsString } from '../../types/index';
@@ -189,7 +197,15 @@ const componentInteractionSample = {
             components: [row],
         });
         //スラッシュコマンドを入力したユーザーのみがコンポーネントの操作ができる
-        const collectorFilter = (i: any) => i.user.id === interaction.user.id;
+        const collectorFilter = (
+            i:
+                | ButtonInteraction<CacheType>
+                | StringSelectMenuInteraction<CacheType>
+                | UserSelectMenuInteraction<CacheType>
+                | RoleSelectMenuInteraction<CacheType>
+                | MentionableSelectMenuInteraction<CacheType>
+                | ChannelSelectMenuInteraction<CacheType>
+        ) => i.user.id === interaction.user.id;
 
         try {
             const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
@@ -256,7 +272,7 @@ const componentInteractionAdvance = {
             });
             const collector = selectedItem.createMessageComponentCollector({
                 componentType: ComponentType.StringSelect,
-                time: 3_600_000,
+                time: 30_000,
             });
 
             collector.on('collect', async (i: StringSelectMenuInteraction<CacheType>) => {
@@ -269,9 +285,18 @@ const componentInteractionAdvance = {
                 console.log(`values: ${i.values}`);
                 const selection = i.values[0];
                 await i.reply(`${i.user} has selected ${selection}!`);
+                await i.followUp(`Thank you for select item!`);
             });
-            collector.on('end', (collected) => {
-                console.log(`Collected ${collected.size} interactions.`);
+            //コレクターが指定された終了条件に基づいて収集を完了するとendイベントが発行される。
+            //*今回の場合は、30秒経過した場合に終了する。これ -> createMessageComponentCollector({ ... time: 30_000,});
+            collector.on('end', async (collected: Collection<string, StringSelectMenuInteraction<CacheType>>) => {
+                if (collected.size === 1) {
+                    await interaction.followUp(`The selection is closed. Thank you for answer the selection!`);
+                    console.log(`Collected ${collected.size} interactions.`);
+                } else if (collected.size === 0) {
+                    await interaction.followUp(`Your selection is missing. Because, 30 sec. passed.`);
+                    console.log(`Collected ${collected.size} interactions.`);
+                }
             });
         } catch (error) {
             await interaction.editReply({
@@ -288,23 +313,23 @@ const componentInteractionAdvance = {
 const ModalSample = {
     data: new SlashCommandBuilder().setName('modal').setDescription('modal sample'),
     async execute(interaction: CommandInteraction) {
-        const modal = new ModalBuilder().setCustomId('modalSample').setTitle('modal sample');
+        const modal: ModalBuilder = new ModalBuilder().setCustomId('modal').setTitle('modal sample');
 
         //modalの中身の作成
         //*TextInputStyle.Short <- 短いテキストのインプットに使う
-        const favoriteColorInput = new TextInputBuilder()
+        const favoriteColorInput: TextInputBuilder = new TextInputBuilder()
             .setCustomId('favoriteColorInput')
             .setLabel("What's your favorite color?")
             .setStyle(TextInputStyle.Short);
 
         //*TextInput+.Paragraph <- 長めのテキストのインプットに使う
-        const hobbiesInput = new TextInputBuilder()
+        const hobbiesInput: TextInputBuilder = new TextInputBuilder()
             .setCustomId('hobbiesInput')
             .setLabel("What's some of your favorite hobbies?")
             .setStyle(TextInputStyle.Paragraph);
 
         //*入力プロパティのいろいろ
-        const inputSample = new TextInputBuilder()
+        const inputSample: TextInputBuilder = new TextInputBuilder()
             .setCustomId('inputSample')
             .setLabel('input sample')
             .setStyle(TextInputStyle.Paragraph)
@@ -324,6 +349,32 @@ const ModalSample = {
 
         //モーダルの表示
         await interaction.showModal(modal);
+
+        //filterの作成
+        const filter = (interaction: ModalSubmitInteraction<CacheType>) => interaction.customId === `modal`;
+        try {
+            //モーダルの送信時間の制限をする
+            const modalInteraction = await interaction.awaitModalSubmit({ filter, time: 30_000 });
+            //***モーダル送信への応答***/
+            // reply()
+            // editReply()
+            // deferReply()
+            // fetchReply()
+            // deleteReply()
+            // followUp()
+            // update()
+            // deferUpdate()
+            //が使えるはず
+            //*モーダルで送信されたデータの抽出
+            const favoriteColor: string = modalInteraction.fields.getTextInputValue('favoriteColorInput');
+            const hobbies: string = modalInteraction.fields.getTextInputValue('hobbiesInput');
+            const inputSample: string = modalInteraction.fields.getTextInputValue('inputSample');
+            await modalInteraction.reply(`favorite color: ${favoriteColor}`);
+            await modalInteraction.followUp(`hobbies: ${hobbies}`);
+            await modalInteraction.followUp(`inputSample: ${inputSample}`);
+        } catch (error) {
+            console.error(error);
+        }
     },
 };
 
@@ -650,7 +701,7 @@ const reactSpecificDelete = {
             await message.react('🐚');
             await message.react('🍏');
             await message.react('🐠');
-        } catch (error) {
+        } catch (error: any) {
             console.error('One of the emojis failed to react:', error);
         }
 
@@ -692,6 +743,95 @@ const reactSpecificGet = {
     },
 };
 
+//リアクションコレクター
+//*createReactionCollector()
+//参考: https://brianmorrison.me/blog/discord-bot-reaction-collectors/
+const reactCollectorSample = {
+    data: new SlashCommandBuilder().setName('reaction-collector').setDescription('reaction collector sample'),
+    async execute(interaction: CommandInteraction) {
+        const message = await interaction.reply({ content: 'Which emoji do you prefer?', fetchReply: true });
+        await message.react('👍');
+        await message.react('👎');
+
+        //filterの作成
+        const filter = (reaction: MessageReaction, user: User) => {
+            if (typeof reaction.emoji.name === 'string') {
+                return ['👍', '👎'].includes(reaction.emoji.name) && !user.bot;
+            } else {
+                return false;
+            }
+        };
+
+        //collectorの作成
+        const collector = message.createReactionCollector({ filter, max: 1, time: 15_000 });
+
+        collector.on('collect', async (reaction: MessageReaction, user: User) => {
+            console.log(`Collected ${reaction.emoji.name} from ${user.tag}`);
+            await message.reactions.removeAll().catch((error) => console.error('Failed to clear reactions:', error));
+            await interaction.followUp(`${user.tag} chose ${reaction.emoji.name}`);
+            await interaction.followUp(`Thank you for answer the question!`);
+        });
+        collector.on('end', async (collected: Collection<string, MessageReaction>) => {
+            console.log(`Collected ${collected.size} items`);
+        });
+    },
+};
+
+//リアクションコレクター
+//*awaitReactions()
+//参考: https://brianmorrison.me/blog/discord-bot-reaction-collectors/
+//参考: https://maah.gitbooks.io/discord-bots/content/getting-started/awaiting-messages-and-reactions.html
+//参考: https://scrapbox.io/discordjs-japan/%E3%83%AA%E3%82%A2%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%95%E3%82%8C%E3%82%8B%E3%81%AE%E3%82%92%E5%BE%85%E3%81%A1%E5%8F%97%E3%81%91%E3%81%A6%E5%87%A6%E7%90%86%E3%82%92%E5%AE%9F%E8%A1%8C%E3%81%99%E3%82%8B
+const reactCollectorAwaitReactionSample = {
+    data: new SlashCommandBuilder()
+        .setName('reaction-collector-await')
+        .setDescription('reaction collector await reaction sample'),
+    async execute(interaction: CommandInteraction) {
+        const message = await interaction.reply({ content: 'Which fish do you prefer?', fetchReply: true });
+        await message.react('🐠');
+        await message.react('🐡');
+        await message.react('🐟');
+        await message.react('🦈');
+
+        //filterの作成
+        const collectorFilter = (reaction: MessageReaction, user: User) => {
+            if (typeof reaction.emoji.name === 'string') {
+                return ['🐠', '🐡', '🐟', '🦈'].includes(reaction.emoji.name) && !user.bot;
+            } else {
+                return false;
+            }
+        };
+
+        try {
+            const reaction: Collection<string, MessageReaction> = await message.awaitReactions({
+                filter: collectorFilter,
+                max: 1,
+                time: 60_000,
+                errors: ['time'],
+            });
+            console.log(reaction.size);
+            console.log(
+                `Collected ${reaction.first()?.emoji.name} from ${reaction
+                    .first()
+                    ?.users.cache.map((user) => user.tag)}`
+            );
+
+            await message.reactions.removeAll().catch((error) => console.error('Failed to clear reactions:', error));
+            const users: (string | undefined)[] | undefined = reaction.first()?.users.cache.map((user) => {
+                if (user.tag === 'DebtBot#0927') return;
+                return user.tag;
+            });
+            if (!users || users.length === 0) return;
+            const user: string | undefined = users[1];
+            if (typeof user === 'undefined') return;
+            await interaction.followUp(`${user} chose ${reaction.first()?.emoji.name}`);
+            await interaction.followUp(`Thank you for answer the question!`);
+        } catch (error: any) {
+            console.log(`After a minute, only ${error.size} out of 4 reacted.`);
+        }
+    },
+};
+
 export {
     buttonSample,
     MenuSample,
@@ -709,4 +849,6 @@ export {
     reactAllDelete,
     reactSpecificDelete,
     reactSpecificGet,
+    reactCollectorSample,
+    reactCollectorAwaitReactionSample,
 };

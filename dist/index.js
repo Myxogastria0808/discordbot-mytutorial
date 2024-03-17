@@ -36,6 +36,7 @@ client.once('ready', () => {
 //  スラッシュコマンドを使うには、interactionCreateのインベントリスナーを使う必要がある
 client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
     if (interaction.isChatInputCommand()) {
+        //*ChatInputCommand
         //入力されたスラッシュコマンドは、interaction.commandNameに格納される
         if (interaction.commandName === ping_1.ping.data.name) {
             try {
@@ -677,11 +678,52 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
                 }
             }
         }
+        else if (interaction.commandName === rich_1.reactCollectorSample.data.name) {
+            try {
+                await rich_1.reactCollectorSample.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
+        else if (interaction.commandName === rich_1.reactCollectorAwaitReactionSample.data.name) {
+            try {
+                await rich_1.reactCollectorAwaitReactionSample.execute(interaction);
+            }
+            catch (error) {
+                console.error(error);
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+                else {
+                    await interaction.reply({
+                        content: 'There was an error while executing this command!',
+                        ephemeral: true,
+                    });
+                }
+            }
+        }
         else {
             console.error(`No command matching ${interaction.commandName} was found.`);
         }
     }
     else if (interaction.isAutocomplete()) {
+        //*Autocomplete
         if (interaction.commandName === elaborate_1.autoCompleteSample.data.name) {
             await elaborate_1.autoCompleteSample.autocompleteFunc(interaction);
         }
@@ -692,34 +734,14 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
             console.error(`No command matching ${interaction.commandName} was found.`);
         }
     }
-    else if (interaction.isModalSubmit()) {
-        if (interaction.customId === 'modalSample') {
-            //***モーダル送信への応答***/
-            // reply()
-            // editReply()
-            // deferReply()
-            // fetchReply()
-            // deleteReply()
-            // followUp()
-            // update()
-            // deferUpdate()
-            //が使えるはず
-            //*モーダルで送信されたデータの抽出
-            //const getInputValue = interaction.fields.getTextInputValue("custom id");
-            const favoriteColor = interaction.fields.getTextInputValue('favoriteColorInput');
-            const hobbies = interaction.fields.getTextInputValue('hobbiesInput');
-            const inputSample = interaction.fields.getTextInputValue('inputSample');
-            await interaction.reply(`favorite color: ${favoriteColor}`);
-            await interaction.followUp(`hobbies: ${hobbies}`);
-            await interaction.followUp(`inputSample: ${inputSample}`);
-        }
-    }
     else if (interaction.isMessageContextMenuCommand()) {
+        //*MessageContextMenuCommand
         if (interaction.commandName === 'Translate message') {
             await rich_1.contentMenusMessage.execute(interaction);
         }
     }
     else if (interaction.isUserContextMenuCommand()) {
+        //*UserContextMenuCommand
         if (interaction.commandName === 'User Information') {
             await rich_1.contextMenusUser.execute(interaction);
         }

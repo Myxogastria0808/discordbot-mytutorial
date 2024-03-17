@@ -642,7 +642,6 @@ client.on(Events.InteractionCreate, async (interaction: Interaction<CacheType>) 
             // deferUpdate()
             //が使えるはず
             //*モーダルで送信されたデータの抽出
-            //const getInputValue = interaction.fields.getTextInputValue("custom id");
             const favoriteColor: string = interaction.fields.getTextInputValue('favoriteColorInput');
             const hobbies: string = interaction.fields.getTextInputValue('hobbiesInput');
             const inputSample: string = interaction.fields.getTextInputValue('inputSample');

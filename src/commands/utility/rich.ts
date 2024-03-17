@@ -240,6 +240,7 @@ const componentInteractionAdvance = {
             content: 'Button Sample',
             components: [firstRow],
         });
+
         //スラッシュコマンドを入力したユーザーのみがコンポーネントの操作ができる
         const collectorFilter = (i: any) => i.user.id === interaction.user.id;
 
@@ -257,6 +258,7 @@ const componentInteractionAdvance = {
                 componentType: ComponentType.StringSelect,
                 time: 3_600_000,
             });
+
             collector.on('collect', async (i: StringSelectMenuInteraction<CacheType>) => {
                 console.log(`client: ${i.client}`);
                 console.log(`createdAt: ${i.createdAt}`);
@@ -267,6 +269,9 @@ const componentInteractionAdvance = {
                 console.log(`values: ${i.values}`);
                 const selection = i.values[0];
                 await i.reply(`${i.user} has selected ${selection}!`);
+            });
+            collector.on('end', (collected) => {
+                console.log(`Collected ${collected.size} interactions.`);
             });
         } catch (error) {
             await interaction.editReply({

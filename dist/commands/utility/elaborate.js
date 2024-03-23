@@ -45,7 +45,7 @@ const variousOptionsSub = {
         .addAttachmentOption((option) => option.setName('attachment').setDescription('ファイルのアップロード'))
         .addChannelOption((option) => option.setName('channel').setDescription('不明'))
         .addRoleOption((option) => option.setName('role').setDescription('不明'))
-        .addUserOption((option) => option.setName('user').setDescription('不明')),
+        .addUserOption((option) => option.setName('user').setDescription('ユーザーID')),
     async execute(interaction) {
         const stringValue = interaction.options.get('string')?.value;
         const integerValue = interaction.options.get('integer')?.value;
